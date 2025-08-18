@@ -1,13 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anjaylytics</title>
-  </head>
-  <body>
+    <title>Anjaylytics Pro Dashboard</title>
+    
+    <!-- Tailwind CSS for utility classes (used by the original code) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS from the design -->
+    <style>
+        /* App.css - Styles for the Anjaylytics Pro Dashboard */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        /* --- Main Layout & Grid --- */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 3fr 1fr;
+            }
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* --- Header --- */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+
+        .date-info {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: right;
+        }
+
+        .last-updated {
+            font-size: 0.8rem;
+            color: #0d6efd;
+            margin-top: 0.25rem;
+        }
+
+        /* --- Cards --- */
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        /* --- Input Grid --- */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .input-grid label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-wrapper input {
+            width: 120px;
+            border: 1px solid #ced4da;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+        }
+
+        .input-wrapper span {
+            color: #6c757d;
+        }
+
+        .tip {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.75rem;
+            margin-bottom: 0;
+        }
+
+        /* --- Ideas Section --- */
+        .ideas-section {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.75rem;
+        }
+
+        .ideas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .ideas-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .header-controls select, .header-controls button {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+        .header-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            padding: 2rem;
+            text-align: center;
+            color: #6c757d;
+        }
+        .status-message.error {
+            color: #dc3545;
+        }
+
+        /* --- Idea Row --- */
+        .idea-row {
+            display: grid;
+            grid-template-columns: 100px 2fr repeat(5, 1fr);
+            gap: 1.5rem;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .idea-row:hover {
+            background-color: #f8f9fa;
+        }
+        .idea-row:last-child {
+            border-bottom: none;
+        }
+        .idea-row .label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-bottom: 0.1rem;
+            text-transform: uppercase;
+        }
+        .idea-symbol .font-semibold {
+            font-weight: 500;
+        }
+        .details-link {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 500;
+            justify-self: end;
+        }
+        .badge {
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            text-align: center;
+        }
+        .badge-green { background-color: #d1e7dd; color: #0f5132; }
+        .badge-yellow { background-color: #fff3cd; color: #664d03; }
+        .badge-gray { background-color: #e2e3e5; color: #41464b; }
+
+        .details-panel {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .detail-card {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .detail-card b {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #212529;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        .calibration-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .tips-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            space-y: 1rem;
+        }
+        .tips-list li {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .tips-list b {
+            color: #0d6efd;
+        }
+        .link-button {
+            background: none;
+            border: none;
+            color: #0d6efd;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+
+    <!-- React and Babel for in-browser JSX transformation -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Your React Component -->
+    <script type="text/babel">
+        // App.tsx — Anjaylytics Pro Dashboard
+        const { useEffect, useMemo, useState, useCallback } = React;
+
+        const API_BASE = "https://anjaylytics-backend-1.onrender.com";
+
+        const toBwp = (n) => `P${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+        const badgeColor = (score) => {
+            if (score >= 0.7) return "badge-green";
+            if (score >= 0.55) return "badge-yellow";
+            return "badge-gray";
+        };
+
+        const COACH_TIPS = [
+            [
+                { category: "Basics", text: "Position size first. A good idea with bad sizing can still lose money." },
+                { category: "Basics", text: "Only trade when the edge passes both gates: probability ≥ threshold and EV > 0 after fees/FX." },
+                { category: "Basics", text: "No-trade days are wins—avoiding bad bets protects capital." },
+            ],
+            [
+                { category: "Risk", text: "Cap loss per day to ~2% of bankroll. After a 4% drawdown, halve sizes tomorrow." },
+                { category: "Risk", text: "Set stops when you enter. Move them only with a plan, not emotion." },
+                { category: "Risk", text: "Avoid illiquid names. If ADV is low, slippage eats your edge." },
+            ],
+            [
+                { category: "Mindset", text: "Process over outcome: judge the decision by the plan, not a single result." },
+                { category: "Mindset", text: "Keep a mistakes log: late entries, stop discipline, chasing." },
+                { category: "Mindset", text: "Let data speak—don’t force a trade to ‘use the budget’." },
+            ],
+        ];
+
+        function pickDailyTips() {
+            const today = new Date().toISOString().slice(0, 10);
+            let seed = 0;
+            for (let i = 0; i < today.length; i++) seed = (seed * 31 + today.charCodeAt(i)) >>> 0;
+            function rand() { seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; return (seed >>> 0) / 0xffffffff; }
+            return COACH_TIPS.map(group => group[Math.floor(rand() * group.length)]);
+        }
+
+        function App() {
+            const [dailyBudget, setDailyBudget] = useState(500);
+            const [bankroll, setBankroll] = useState(10000);
+            const [riskSlider, setRiskSlider] = useState(0.5);
+            const [preset, setPreset] = useState("Global");
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+            const [plan, setPlan] = useState(null);
+            const [tips, setTips] = useState(() => pickDailyTips());
+            const [metrics, setMetrics] = useState(null);
+            const [reliability, setReliability] = useState(null);
+            const [modalOpen, setModalOpen] = useState(false);
+            const [lastUpdated, setLastUpdated] = useState(null);
+            const [expandedIdea, setExpandedIdea] = useState(null);
+
+            const riskLabel = useMemo(() => (riskSlider < 0.34 ? "conservative" : riskSlider < 0.67 ? "balanced" : "aggressive"), [riskSlider]);
+            const threshold = useMemo(() => (riskSlider < 0.34 ? 0.60 : riskSlider < 0.67 ? 0.56 : 0.53), [riskSlider]);
+
+            const fetchPlan = useCallback(async () => {
+                setLoading(true);
+                setError(null);
+                const params = new URLSearchParams({
+                    daily_budget_pula: String(dailyBudget),
+                    bankroll_pula: String(bankroll),
+                    risk: riskLabel,
+                    preset,
+                });
+                try {
+                    const res = await fetch(`${API_BASE}/plan/today?${params.toString()}`);
+                    if (!res.ok) throw new Error(`API Error: ${res.status}`);
+                    const data = await res.json();
+                    setPlan(data);
+                    setLastUpdated(new Date());
+                } catch (e) {
+                    setError(e.message || "Failed to load plan");
+                } finally {
+                    setLoading(false);
+                }
+            }, [dailyBudget, bankroll, riskLabel, preset]);
+
+            const fetchMetrics = useCallback(async () => {
+                try {
+                    const [m, r] = await Promise.all([
+                        fetch(`${API_BASE}/metrics`).then(res => res.json()),
+                        fetch(`${API_BASE}/reliability`).then(res => res.json()),
+                    ]);
+                    setMetrics(m);
+                    setReliability(r);
+                } catch (e) {
+                    console.error("Failed to fetch metrics:", e);
+                }
+            }, []);
+
+            useEffect(() => {
+                fetchPlan();
+            }, [fetchPlan]);
+            
+            useEffect(() => {
+                fetchMetrics();
+            }, [fetchMetrics]);
+
+            const exportCsv = () => {
+                if (!plan || !plan.ideas.length) return;
+                const rows = [
+                    ['date', 'preset', 'symbol', 'name', 'market', 'entry', 'stop', 'take', 'probability', 'ev_pct', 'size_bwp'],
+                    ...plan.ideas.map(i => [
+                        plan.asof, plan.preset, i.symbol, i.name, i.market, i.entry, i.stop, i.take,
+                        (i.p * 100).toFixed(1) + '%', (i.ev * 100).toFixed(2), i.size_bwp
+                    ])
+                ];
+                const csv = rows.map(r => r.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `anjaylytics_plan_${plan.asof}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            const totalAlloc = plan?.ideas?.reduce((sum, idea) => sum + idea.size_bwp, 0) || 0;
+
+            return (
+                <div className="app-container">
+                    <header className="app-header">
+                        <div>
+                            <h1 className="title">Anjaylytics — Daily Investing Coach</h1>
+                            <p className="subtitle">Data-driven signals for BSE & Global markets. (Educational Demo)</p>
+                        </div>
+                        <div className="date-info">
+                            Gaborone (UTC+2)
+                            <div>Today: {new Date().toLocaleDateString('en-CA')}</div>
+                            {lastUpdated && <div className="last-updated">Last Updated: {lastUpdated.toLocaleTimeString()}</div>}
+                        </div>
+                    </header>
+
+                    <main className="main-grid">
+                        <div className="main-content">
+                            <section className="input-grid">
+                                <div className="card">
+                                    <label htmlFor="daily-budget">Daily Budget</label>
+                                    <div className="input-wrapper">
+                                        <input id="daily-budget" type="number" min={50} step={50} value={dailyBudget} onChange={e => setDailyBudget(Number(e.target.value))} />
+                                        <span>Pula</span>
+                                    </div>
+                                    <p className="tip">Max capital to deploy today.</p>
+                                </div>
+                                <div className="card">
+                                    <label htmlFor="bankroll">Total Bankroll</label>
+                                    <div className="input-wrapper">
+                                        <input id="bankroll" type="number" min={500} step={100} value={bankroll} onChange={e => setBankroll(Number(e.target.value))} />
+                                        <span>Pula</span>
+                                    </div>
+                                    <p className="tip">Used for Kelly sizing.</p>
+                                </div>
+                                <div className="card">
+                                    <label htmlFor="risk-setting">Risk Setting</label>
+                                    <input id="risk-setting" type="range" min={0} max={1} step={0.01} value={riskSlider} onChange={e => setRiskSlider(Number(e.target.value))} />
+                                    <p className="tip">{riskLabel.charAt(0).toUpperCase() + riskLabel.slice(1)} · Prob. threshold ≥ {Math.round(threshold * 100)}%</p>
+                                </div>
+                            </section>
+
+                            <section className="ideas-section">
+                                <div className="ideas-header">
+                                    <h2>Today's Ideas</h2>
+                                    <div className="header-controls">
+                                        <select value={preset} onChange={e => setPreset(e.target.value)}>
+                                            <option value="Global">Global (US)</option>
+                                            <option value="Botswana">Botswana (BSE)</option>
+                                        </select>
+                                        <button onClick={exportCsv} disabled={!plan?.ideas?.length}>Export CSV</button>
+                                    </div>
+                                </div>
+                                <div className="ideas-list">
+                                    {loading && <div className="status-message">Loading Plan...</div>}
+                                    {error && <div className="status-message error">{error}</div>}
+                                    {!loading && !error && plan?.ideas?.length === 0 && <div className="status-message">{plan?.cash?.reason || "No ideas met the criteria."}</div>}
+                                    {plan?.ideas?.map(idea => (
+                                        <React.Fragment key={idea.symbol}>
+                                            <div className="idea-row" onClick={() => setExpandedIdea(expandedIdea === idea.symbol ? null : idea.symbol)}>
+                                                <div className={`badge ${badgeColor(idea.p)}`}>{Math.round(idea.p * 100)}% conf.</div>
+                                                <div className="idea-symbol">
+                                                    <div className="font-semibold">{idea.symbol} · {idea.market}</div>
+                                                    <div className="text-slate-500">{idea.name}</div>
+                                                </div>
+                                                <div><div className="label">Entry</div><div>${idea.entry.toFixed(1)}</div></div>
+                                                <div><div className="label">Stop/Take</div><div>{idea.stop.toFixed(1)}/{idea.take.toFixed(1)}</div></div>
+                                                <div className={`font-semibold ${idea.ev > 0 ? "text-green-600" : "text-red-600"}`}><div className="label">EV</div><div>{(idea.ev * 100).toFixed(1)}%</div></div>
+                                                <div><div className="label">Size</div><div>{toBwp(idea.size_bwp)}</div></div>
+                                                <div className="details-link">{expandedIdea === idea.symbol ? 'Hide' : 'Details'}</div>
+                                            </div>
+                                            {expandedIdea === idea.symbol && (
+                                                <div className="details-panel">
+                                                    <div className="detail-card"><b>Rationale:</b> {idea.rationale}</div>
+                                                    <div className="detail-card"><b>Headlines:</b> <ul className="list-disc list-inside">{idea.headlines.map((h, i) => <li key={i}>{h}</li>)}</ul></div>
+                                                </div>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                </div>
+                            </section>
+                        </div>
+
+                        <aside className="sidebar">
+                            <div className="card">
+                                <h3 className="sidebar-title">Model Quality</h3>
+                                <div className="metric-item"><span>Brier Score</span><span className="font-semibold">{metrics?.brier?.toFixed(3) ?? '—'}</span></div>
+                                <div className="text-xs text-slate-500 mb-2">Lower is better. 0 is perfect.</div>
+                                <h4 className="calibration-title">Calibration</h4>
+                                <div className="text-xs text-slate-500">Predicted vs. Actual Hit Rate</div>
+                            </div>
+                            <div className="card">
+                                <h3 className="sidebar-title">Coach's Corner</h3>
+                                <ul className="tips-list">
+                                    {tips.map((tip, i) => <li key={i}><b>{tip.category}:</b> {tip.text}</li>)}
+                                </ul>
+                            </div>
+                             <div className="card">
+                                <h3 className="sidebar-title">Broker Info</h3>
+                                <button onClick={() => setModalOpen(true)} className="link-button">Open Account Checklist</button>
+                            </div>
+                        </aside>
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
 </html>
