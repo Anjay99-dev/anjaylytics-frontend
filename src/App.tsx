@@ -7,11 +7,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
-// Robust API base detection
-const apiFromVite = (typeof import.meta !== 'undefined' && (import.meta as any)?.env?.VITE_ANJAYLYTICS_API) || undefined;
-const apiFromNode = (typeof process !== 'undefined' && (process as any)?.env?.REACT_APP_ANJAYLYTICS_API) || undefined;
-const apiFromWindow = (typeof window !== 'undefined' && (window as any).__ANJAYLYTICS_API) || undefined;
-const API_BASE = apiFromVite || apiFromNode || apiFromWindow || "http://localhost:8080";
+const API_BASE = import.meta.env.VITE_ANJAYLYTICS_API || "http://localhost:8080";
 
 // Coach tips (rotates daily; simple shuffle)
 const COACH_TIPS: Array<{ category: string; text: string }>[] = [
