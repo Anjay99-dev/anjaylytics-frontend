@@ -1,4 +1,4 @@
-// App.tsx — Anjaylytics — React Dashboard (MVP v7)
+// App.tsx — Anjaylytics — React Dashboard (MVP v7) final
 // - Metrics mini-tiles at top (Brier)
 // - Verified broker URLs for Botswana + Global
 // - "Open Account" checklist modal
